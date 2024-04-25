@@ -1,0 +1,33 @@
+name: Update Pull Request Target
+
+on:
+  push:
+    branches:
+      - feature/sprint35
+
+jobs:
+  update_pr_target:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Find Pull Requests targeting sprint34
+        id: find_prs
+        run: |
+          PR_LIST=$(gh pr list --state open --base feature/sprint34 --json number,title,url)
+          echo "::set-output name=pr_list::$PR_LIST"
+
+      - name: Extract PR numbers
+        id: extract_pr_numbers
+        run: |
+          PR_NUMBERS=$(echo "${{ steps.find_prs.outputs.pr_list }}" | jq -r '.[].number')
+          echo "::set-output name=pr_numbers::$PR_NUMBERS"
+
+      - name: Update PR targets
+        if: steps.extract_pr_numbers.outputs.pr_numbers != ''
+        run: |
+          for PR_NUMBER in ${{ steps.extract_pr_numbers.outputs.pr_numbers }}; do
+            gh pr edit $PR_NUMBER --base feature/sprint35
+          done
