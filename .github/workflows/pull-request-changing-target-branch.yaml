@@ -34,7 +34,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
         run: |
-          PR_NUMBERS="${{ steps.extract_pr_numbers.outputs.pr_number_list }}"
-          for PR_NUMBER in $PR_NUMBERS; do # バッシュでループ
+          # PR_NUMBERS変数から括弧とスペースを削除し、配列として処理
+          PR_NUMBERS_STR=$(echo $PR_NUMBERS | tr -d '[]' | tr ',' ' ')
+          for PR_NUMBER in $PR_NUMBERS_STR; do
+            echo "Editing PR: $PR_NUMBER"
             gh pr edit $PR_NUMBER --base feature/sprint35
           done
