@@ -24,7 +24,7 @@ jobs:
       - name: Extract PR numbers
         id: extract_pr_numbers
         run: |
-          PR_LIST="${{ steps.find_pull_requests.outputs.pr_list }}"
+          PR_LIST='${{ steps.find_pull_requests.outputs.pr_list }}'
           PR_NUMBERS=$(echo $PR_LIST | jq -r '.[].number')
           echo "pr_numbers=$PR_NUMBERS" >> $GITHUB_OUTPUT
 
