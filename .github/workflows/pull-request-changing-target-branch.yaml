@@ -26,14 +26,15 @@ jobs:
         run: |
           PR_LIST='${{ steps.find_pull_requests.outputs.pr_list }}'
           PR_NUMBERS=$(echo $PR_LIST | jq -r '.[].number | tostring' | paste -sd ',')
-          echo "pr_numbers=$PR_NUMBERS" >> $GITHUB_OUTPUT
+          PR_NUMBER_LIST="[$PR_NUMBERS]"
+          echo "pr_number_list=$PR_NUMBER_LIST" >> $GITHUB_OUTPUT
 
       - name: Update PR targets
-        if: steps.extract_pr_numbers.outputs.pr_numbers != '' # 空白チェック
+        if: steps.extract_pr_numbers.outputs.pr_number_list != '' # 空白チェック
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
         run: |
-          PR_NUMBERS="${{ steps.extract_pr_numbers.outputs.pr_numbers }}"
+          PR_NUMBERS="${{ steps.extract_pr_numbers.outputs.pr_number_list }}"
           for PR_NUMBER in $PR_NUMBERS; do # バッシュでループ
             gh pr edit $PR_NUMBER --base feature/sprint35
           done
