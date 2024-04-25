@@ -13,19 +13,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: get base branch
-        timeout-minutes: 1
+      - name: Calculate previous sprint branch
         id: get_base_branch
         run: |
-          BRANCH_NAME=$(git branch -r | grep 'feature/KP2-A/sprint' | head -n 1 | sed 's/origin\///'  | sed 's/^\s*//')
-          echo "base_branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          SPRINT_NUMBER=$(echo "${GITHUB_REF##*/}" | grep -o '[0-9]*$')
+          PREVIOUS_SPRINT=$((SPRINT_NUMBER - 1))
+          PREVIOUS_BRANCH="feature/KP2-A/sprint${PREVIOUS_SPRINT}"
+          echo "previous_branch=${PREVIOUS_BRANCH}" >> $GITHUB_ENV
 
       - name: Find Pull Requests targeting sprint34
         id: find_pull_requests
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
         run: |
-          PR_LIST=$(gh pr list --state open --base ${{steps.get_base_branch.outputs.base_branch}} --json number)
+          PR_LIST=$(gh pr list --state open --base ${{steps.get_base_branch.outputs.previous_branch}} --json number)
           echo "pr_list=$PR_LIST" >> $GITHUB_OUTPUT
 
       - name: Extract PR numbers
