@@ -19,7 +19,7 @@ jobs:
           SPRINT_NUMBER=$(echo "${GITHUB_REF##*/}" | grep -o '[0-9]*$')
           PREVIOUS_SPRINT=$((SPRINT_NUMBER - 1))
           PREVIOUS_BRANCH="feature/KP2-A/sprint${PREVIOUS_SPRINT}"
-          echo "previous_branch=${PREVIOUS_BRANCH}" >> $GITHUB_ENV
+          echo "previous_branch=$PREVIOUS_BRANCH" >> $GITHUB_ENV
 
       - name: Find Pull Requests targeting sprint34
         id: find_pull_requests
