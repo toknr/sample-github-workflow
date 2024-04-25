@@ -14,18 +14,18 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Find Pull Requests targeting sprint34
-        id: find_prs
+        id: find_pull_requests
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
         run: |
           PR_LIST=$(gh pr list --state open --base feature/sprint34 --json number,title,url)
-          echo "::set-output name=pr_list::$PR_LIST"
+          echo "pr_list=$PR_LIST" >> $GITHUB_OUTPUT
 
       - name: Extract PR numbers
         id: extract_pr_numbers
         run: |
-          PR_NUMBERS=$(echo "${{ steps.find_prs.outputs.pr_list }}" | jq -r '.[].number')
-          echo "::set-output name=pr_numbers::$PR_NUMBERS"
+          PR_NUMBERS=$(echo "${{ steps.find_pull_requests.outputs.pr_list }}" | jq -r '.[].number')
+          echo "pr_numbers=$PR_NUMBERS >> $GITHUB_OUTPUT"
 
       - name: Update PR targets
         if: steps.extract_pr_numbers.outputs.pr_numbers != ''
