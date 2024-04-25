@@ -18,14 +18,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
         run: |
-          PR_LIST=$(gh pr list --state open --base feature/sprint34 --json number,title,url)
+          PR_LIST=$(gh pr list --state open --base feature/sprint34 --json number)
           echo "pr_list=$PR_LIST" >> $GITHUB_OUTPUT
 
       - name: Extract PR numbers
         id: extract_pr_numbers
         run: |
           PR_NUMBERS=$(echo "${{ steps.find_pull_requests.outputs.pr_list }}" | jq -r '.[].number')
-          echo "pr_numbers=$PR_NUMBERS >> $GITHUB_OUTPUT"
+          echo "pr_numbers=$PR_NUMBERS" >> $GITHUB_OUTPUT
 
       - name: Update PR targets
         if: steps.extract_pr_numbers.outputs.pr_numbers != ''
