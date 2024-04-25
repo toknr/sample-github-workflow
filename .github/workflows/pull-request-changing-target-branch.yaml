@@ -15,6 +15,8 @@ jobs:
 
       - name: Find Pull Requests targeting sprint34
         id: find_prs
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
         run: |
           PR_LIST=$(gh pr list --state open --base feature/sprint34 --json number,title,url)
           echo "::set-output name=pr_list::$PR_LIST"
