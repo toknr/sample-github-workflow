@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - feature/KP2-A/sprint*
+env:
+  GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
 
 jobs:
   update_pr_target:
@@ -24,8 +26,6 @@ jobs:
 
       - name: Find Pull Requests targeting previous sprint branch
         id: find_pull_requests
-        env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
         run: |
           # 前のスプリントブランチに向けられたPRを取得
           PR_LIST=$(gh pr list --state open --base ${{steps.get_base_branch.outputs.previous_sprint_branch}} --json number)
@@ -42,8 +42,6 @@ jobs:
 
       - name: Update PR targets
         if: steps.extract_pr_numbers.outputs.pr_number_list != ''
-        env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
         run: |
           # PR_NUMBERS変数から括弧とスペースを削除し、配列として処理
           PR_NUMBERS_STR=$(echo ${{steps.extract_pr_numbers.outputs.pr_number_list}} | tr ',' ' ')
